@@ -314,7 +314,7 @@ export function SessionClient({
       </div>
 
       {/* Live sidebar */}
-      <aside className="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-base-border bg-base-panel/60 px-4 py-5 md:py-8 flex flex-col">
+        <aside className="w-full md:w-80 shrink-0 border-t md:border-t-0 md:border-l border-base-border glass-strong px-4 py-5 md:py-8 flex flex-col">
         <p className="text-[13px] font-medium text-ink-muted">Attendance</p>
         <p className="text-[26px] font-semibold text-ink mt-1">
           {present} / {roster.length}

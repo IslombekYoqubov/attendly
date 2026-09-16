@@ -10,7 +10,7 @@ export default function LoginPage() {
           <p className="mt-1.5 text-[13px] text-ink-muted">Sign in to manage attendance</p>
         </div>
 
-        <div className="bg-base-panel border border-base-border rounded-card p-6">
+        <div className="glass rounded-card p-6 shadow-panel">
           <Suspense fallback={null}>
             <LoginForm />
           </Suspense>

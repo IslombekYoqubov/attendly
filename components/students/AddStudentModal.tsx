@@ -292,7 +292,7 @@ export function AddStudentModal({
 
       {phase === "done" && (
         <div className="flex flex-col gap-4">
-          <div className="rounded-control border border-base-border bg-white/[0.02] px-4 py-3">
+                    <div className="rounded-control glass px-4 py-3">
             <p className="text-[14px] font-medium text-ink">
               {firstName} {lastName}
             </p>

@@ -28,7 +28,7 @@ export function AttendanceFilters({
         <select
           defaultValue={current.group ?? ""}
           onChange={(e) => update("group", e.target.value)}
-          className="rounded-control bg-white/[0.03] border border-base-border px-3 py-1.5 text-[13px] text-ink"
+          className="rounded-control glass px-3 py-1.5 text-[13px] text-ink"
         >
           <option value="">All groups</option>
           {groups.map((g) => (
@@ -45,7 +45,7 @@ export function AttendanceFilters({
           type="date"
           defaultValue={current.date ?? ""}
           onChange={(e) => update("date", e.target.value)}
-          className="rounded-control bg-white/[0.03] border border-base-border px-3 py-1.5 text-[13px] text-ink"
+          className="rounded-control glass px-3 py-1.5 text-[13px] text-ink"
         />
       </div>
 
@@ -56,7 +56,7 @@ export function AttendanceFilters({
           placeholder="Search name"
           defaultValue={current.student ?? ""}
           onChange={(e) => update("student", e.target.value)}
-          className="rounded-control bg-white/[0.03] border border-base-border px-3 py-1.5 text-[13px] text-ink placeholder:text-ink-faint"
+          className="rounded-control glass px-3 py-1.5 text-[13px] text-ink placeholder:text-ink-faint"
         />
       </div>
 
@@ -65,7 +65,7 @@ export function AttendanceFilters({
         <select
           defaultValue={current.status ?? ""}
           onChange={(e) => update("status", e.target.value)}
-          className="rounded-control bg-white/[0.03] border border-base-border px-3 py-1.5 text-[13px] text-ink"
+          className="rounded-control glass px-3 py-1.5 text-[13px] text-ink"
         >
           <option value="">All statuses</option>
           <option value="PRESENT">Present</option>

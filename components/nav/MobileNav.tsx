@@ -16,7 +16,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 glass border-t border-base-border"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 glass-strong border-t border-base-border"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="flex items-stretch justify-around">

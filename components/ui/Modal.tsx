@@ -33,12 +33,12 @@ export function Modal({
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <motion.div
+            <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden
           />
@@ -50,7 +50,7 @@ export function Modal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className={`relative w-full ${wide ? "max-w-lg" : "max-w-md"} rounded-card bg-base-raised border border-base-borderStrong shadow-panel p-6`}
+            className={`relative w-full ${wide ? "max-w-lg" : "max-w-md"} rounded-card glass-strong shadow-panel p-6`}
           >
             <h2 id="modal-title" className="text-[15px] font-semibold text-ink">
               {title}
