@@ -1,0 +1,158 @@
+// Attendly — database schema
+// Face data is stored strictly as numeric embeddings (Float[]), never as images.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(TEACHER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Attendance & recognition preferences (Settings page). Kept on the user
+  // record rather than a separate table since they are per-teacher, not
+  // shared configuration.
+  defaultLessonDurationMinutes Int   @default(90)
+  lateThresholdMinutes         Int   @default(15)
+  autoConfirmThreshold         Float @default(0.62)
+  confirmationThreshold        Float @default(0.50)
+
+  groups           Group[]
+  attendanceEdits  AttendanceAudit[]
+
+  @@index([email])
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  students Student[]
+  lessons  Lesson[]
+
+  @@index([ownerId])
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  firstName  String
+  lastName   String
+  studentRef String? // optional external student ID
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  faceEnrollment FaceEnrollment?
+  attendances    Attendance[]
+
+  @@index([groupId])
+}
+
+// Biometric data isolated in its own table, one row per student.
+// Only a numeric embedding vector is persisted — no raw imagery.
+model FaceEnrollment {
+  id            String   @id @default(cuid())
+  faceEmbedding Float[]
+  quality       Float // 0..1 capture quality score, used for re-enrollment prompts
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+enum LessonStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+}
+
+model Lesson {
+  id        String       @id @default(cuid())
+  title     String
+  startsAt  DateTime
+  endsAt    DateTime?
+  status    LessonStatus @default(UPCOMING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  attendances Attendance[]
+
+  @@index([groupId])
+  @@index([status])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum AttendanceSource {
+  FACE_RECOGNITION
+  MANUAL
+}
+
+model Attendance {
+  id         String           @id @default(cuid())
+  status     AttendanceStatus
+  source     AttendanceSource @default(MANUAL)
+  confidence Float? // similarity score at time of match, null for manual entries
+  recordedAt DateTime         @default(now())
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  audits AttendanceAudit[]
+
+  // A student can only have one attendance record per lesson.
+  @@unique([lessonId, studentId])
+  @@index([lessonId])
+  @@index([studentId])
+}
+
+// Every manual correction is recorded for accountability.
+model AttendanceAudit {
+  id        String   @id @default(cuid())
+  fromStatus AttendanceStatus?
+  toStatus   AttendanceStatus
+  reason     String?
+  changedAt  DateTime @default(now())
+
+  attendanceId String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+
+  changedById String
+  changedBy   User   @relation(fields: [changedById], references: [id])
+
+  @@index([attendanceId])
+}
